@@ -15,7 +15,7 @@ class App:
         self.y = random.randint(0, pyxel.height)
 
     def is_in_circle(self, xx, yy):
-        d = math.hypot(xx - x, yy - y)
+        d = math.hypot(xx - self.x, yy - self.y)
         return d <= self.r
 
     def __init__(self):
@@ -24,6 +24,11 @@ class App:
         pyxel.run(self.update, self.draw)
 
     def update(self):
+        if pyxel.btn(pyxel.KEY_LEFT_BUTTON):
+            # print(pyxel.mouse_x, pyxel.mouse_y)
+            if self.is_in_circle(pyxel.mouse_x, pyxel.mouse_y):
+                self.new_circle()
+                self.SPEED *= 0.9
         if time.time() - self.start > self.SPEED:
             self.r += 1
             self.start = time.time()
