@@ -9,6 +9,7 @@ class App:
     RED = 8
     BLUE = 12
     ORANGE = 9
+    WHITE = 7
 
     def new_circle(self):
         self.start = time.time()
@@ -27,18 +28,23 @@ class App:
         d = math.hypot(xx - self.x, yy - self.y)
         return d <= self.r
 
-    def __init__(self):
-        pyxel.init(160, 120)
+    def begin(self):
         self.speed = 1
         self.score = 0
         self.lives = 5
         self.new_circle()
+
+    def __init__(self):
+        pyxel.init(160, 120)
+        self.begin()
         pyxel.run(self.update, self.draw)
 
     def update(self):
         if pyxel.btnp(pyxel.KEY_LEFT_BUTTON):
+            if self.lives < 0:
+                self.begin()
             # print(pyxel.mouse_x, pyxel.mouse_y)
-            if self.is_in_circle(pyxel.mouse_x, pyxel.mouse_y):
+            elif self.is_in_circle(pyxel.mouse_x, pyxel.mouse_y):
                 if self.colour == self.BLUE:
                     self.colour = self.ORANGE
                 elif self.colour == self.RED:
@@ -66,6 +72,7 @@ class App:
                 pyxel.circ(self.x, self.y, self.r, self.colour)
         else:
             pyxel.text(50, 50, "GAME OVER", pyxel.frame_count % 16)
+            pyxel.text(70, 70, "Click to restart", self.WHITE)
 
 
 App()
