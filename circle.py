@@ -54,6 +54,10 @@ class App:
                 elif self.colour == self.RED:
                     self.score -= 10
                     self.new_circle()
+                elif self.colour == self.BROWN:
+                    self.score += (pyxel.width - self.x) // 10
+                    self.new_circle()
+                    self.speed *= 0.9
                 else:
                     self.score += (11 - self.r)
                     self.new_circle()
