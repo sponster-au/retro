@@ -10,6 +10,7 @@ class App:
     BLUE = 12
     ORANGE = 9
     WHITE = 7
+    BROWN = 4
 
     def new_circle(self):
         self.start = time.time()
@@ -21,6 +22,10 @@ class App:
             self.colour = self.BLUE
         elif n == 2:
             self.colour = self.RED
+        elif n < 8:
+            self.colour = self.BROWN
+            self.r = self.MAX_R
+            self.x = self.MAX_R
         else:
             self.colour = self.ORANGE
 
@@ -29,7 +34,7 @@ class App:
         return d <= self.r
 
     def begin(self):
-        self.speed = 1
+        self.speed = 0.5
         self.score = 0
         self.lives = 5
         self.new_circle()
@@ -43,7 +48,6 @@ class App:
         if pyxel.btnp(pyxel.KEY_LEFT_BUTTON):
             if self.lives < 0:
                 self.begin()
-            # print(pyxel.mouse_x, pyxel.mouse_y)
             elif self.is_in_circle(pyxel.mouse_x, pyxel.mouse_y):
                 if self.colour == self.BLUE:
                     self.colour = self.ORANGE
@@ -55,12 +59,18 @@ class App:
                     self.new_circle()
                     self.speed *= 0.9
         if time.time() - self.start > self.speed:
-            self.r += 1
-            self.start = time.time()
-            if self.r >= self.MAX_R:
-                if self.colour != self.RED:
+            if self.colour == self.BROWN:
+                self.x += 1
+                if self.x + self.r >= pyxel.width:
                     self.lives -= 1
-                self.new_circle()
+                    self.new_circle()
+            else:
+                self.r += 1
+                self.start = time.time()
+                if self.r >= self.MAX_R:
+                    if self.colour != self.RED:
+                        self.lives -= 1
+                    self.new_circle()
 
     def draw(self):
         pyxel.cls(0)
