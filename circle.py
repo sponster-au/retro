@@ -22,9 +22,9 @@ class App:
             self.colour = self.BLUE
         elif n == 2:
             self.colour = self.RED
-        elif n < 8:
+        elif n == 3:
             self.colour = self.BROWN
-            self.r = self.MAX_R
+            # self.r = self.MAX_R
             self.x = self.MAX_R
         else:
             self.colour = self.ORANGE
@@ -64,7 +64,9 @@ class App:
                     self.speed *= 0.9
         if time.time() - self.start > self.speed:
             if self.colour == self.BROWN:
-                self.x += 1
+                if self.r < self.MAX_R:
+                    self.r += 0.1
+                self.x += 2
                 if self.x + self.r >= pyxel.width:
                     self.lives -= 1
                     self.new_circle()
