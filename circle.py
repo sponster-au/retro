@@ -12,7 +12,10 @@ class App:
         self.r = 0
         self.x = random.randint(self.MAX_R, pyxel.width - self.MAX_R)
         self.y = random.randint(self.MAX_R, pyxel.height - self.MAX_R)
-        self.colour = 12
+        if random.randint(1, 10) == 1:
+            self.colour = 12
+        else:
+            self.colour = 9
 
     def is_in_circle(self, xx, yy):
         d = math.hypot(xx - self.x, yy - self.y)
