@@ -6,16 +6,22 @@ import math
 
 class App:
     MAX_R = 10
+    RED = 8
+    BLUE = 12
+    ORANGE = 9
 
     def new_circle(self):
         self.start = time.time()
         self.r = 0
         self.x = random.randint(self.MAX_R, pyxel.width - self.MAX_R)
         self.y = random.randint(self.MAX_R, pyxel.height - self.MAX_R)
-        if random.randint(1, 10) == 1:
-            self.colour = 12
+        n = random.randint(1, 10)
+        if n == 1:
+            self.colour = self.BLUE
+        elif n == 2:
+            self.colour = self.RED
         else:
-            self.colour = 9
+            self.colour = self.ORANGE
 
     def is_in_circle(self, xx, yy):
         d = math.hypot(xx - self.x, yy - self.y)
@@ -25,7 +31,7 @@ class App:
         pyxel.init(160, 120)
         self.speed = 1
         self.score = 0
-        self.lives = 10
+        self.lives = 5
         self.new_circle()
         pyxel.run(self.update, self.draw)
 
@@ -33,8 +39,11 @@ class App:
         if pyxel.btnp(pyxel.KEY_LEFT_BUTTON):
             # print(pyxel.mouse_x, pyxel.mouse_y)
             if self.is_in_circle(pyxel.mouse_x, pyxel.mouse_y):
-                if self.colour == 12:
-                    self.colour = 9
+                if self.colour == self.BLUE:
+                    self.colour = self.ORANGE
+                elif self.colour == self.RED:
+                    self.score -= 10
+                    self.new_circle()
                 else:
                     self.score += (11 - self.r)
                     self.new_circle()
@@ -43,8 +52,9 @@ class App:
             self.r += 1
             self.start = time.time()
             if self.r >= self.MAX_R:
+                if self.colour != self.RED:
+                    self.lives -= 1
                 self.new_circle()
-                self.lives -= 1
 
     def draw(self):
         pyxel.cls(0)
