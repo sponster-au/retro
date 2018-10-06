@@ -4,23 +4,22 @@ import time
 
 class App:
     def __init__(self):
-        pyxel.init(16, 12, caption="Conway's Life", scale=50)
+        pyxel.init(16 * 5, 12 * 5, caption="Conway's Life", scale=14)
         self.running = False
         # grid[x][y]
         self.grid = [[0 for i in range(pyxel.height)] for j in range(pyxel.width)]
-        self.tick_period = 1.0
-        self.last_tick = time.time()
+        self.new_grid = [[0 for i in range(pyxel.height)] for j in range(pyxel.width)]
         pyxel.run(self.update, self.draw)
 
     def interact(self):
         if pyxel.btnp(pyxel.KEY_SPACE):
             self.running = not self.running
-        if pyxel.btnp(pyxel.KEY_LEFT_BUTTON):
+        if pyxel.btn(pyxel.KEY_LEFT_BUTTON):
+            self.grid[pyxel.mouse_x][pyxel.mouse_y] = 1
+        if pyxel.btn(pyxel.KEY_RIGHT_BUTTON):
+            self.grid[pyxel.mouse_x][pyxel.mouse_y] = 0
+        if pyxel.btn(pyxel.KEY_MIDDLE_BUTTON):
             self.grid[pyxel.mouse_x][pyxel.mouse_y] ^= 1
-        if pyxel.btnp(pyxel.KEY_LEFT):
-            self.tick_period *= 1.5
-        if pyxel.btnp(pyxel.KEY_RIGHT):
-            self.tick_period /= 1.5
 
     def neighbour_count(self, x, y):
         count = 0
@@ -38,22 +37,26 @@ class App:
         return count
 
     def update(self):
+        start = time.time()
         self.interact()
-        if self.running and time.time() - self.last_tick > self.tick_period:
-            self.last_tick = time.time()
-            new_grid = [[0 for i in range(pyxel.height)] for j in range(pyxel.width)]
+        if self.running:
             for x in range(pyxel.width):
                 for y in range(pyxel.height):
                     n = self.neighbour_count(x, y)
                     if self.grid[x][y] == 1 and n in (0, 1):
-                        new_grid[x][y] = 0
-                    if self.grid[x][y] == 1 and n in (2, 3):
-                        new_grid[x][y] = 1
-                    if self.grid[x][y] == 1 and n > 3:
-                        new_grid[x][y] = 0
-                    if self.grid[x][y] == 0 and n == 3:
-                        new_grid[x][y] = 1
-            self.grid = new_grid
+                        self.new_grid[x][y] = 0
+                    elif self.grid[x][y] == 1 and n in (2, 3):
+                        self.new_grid[x][y] = 1
+                    elif self.grid[x][y] == 1 and n > 3:
+                        self.new_grid[x][y] = 0
+                    elif self.grid[x][y] == 0 and n == 3:
+                        self.new_grid[x][y] = 1
+                    else:
+                        self.new_grid[x][y] = 0
+            for x in range(pyxel.width):
+                for y in range(pyxel.height):
+                    self.grid[x][y] = self.new_grid[x][y]
+        print(f"update time {time.time() - start:.1f}")
 
     def draw(self):
         if self.running:
@@ -64,7 +67,6 @@ class App:
             # stopped - black on white
             bg = 7
             fg = 0
-            pyxel.cls(0)
         pyxel.cls(bg)
         for x in range(pyxel.width):
             for y in range(pyxel.height):
